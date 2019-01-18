@@ -1,4 +1,4 @@
-pythjimport numpy as np
+import numpy as np
 import cv2 
 import sys
 
@@ -48,7 +48,7 @@ while True:
         cv2.circle(gray, (iris_w,iris_h),int(float((iris_h/32)+epsilon)), (0,255,0), 2)
 
     #Show the frame
-    #cv2.imshow('Original Video', frame)
+    cv2.imshow('Original Video', frame)
     cv2.imshow('Gray Video', gray)
     cv2.imshow('Edge Video', filter)
 
