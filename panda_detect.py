@@ -1,4 +1,4 @@
-import numpy as np
+pythjimport numpy as np
 import cv2 
 import sys
 
