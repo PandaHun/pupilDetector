@@ -4,11 +4,11 @@ import sys
 
 epsilon =sys.float_info.epsilon
 #Variable for Casc filePath
-#faceCascPath = "C:/Users/Pandahune/Anaconda3/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml"
+faceCascPath = "C:/Users/Pandahune/Anaconda3/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml"
 eyeCascPath = "C:/Users/Pandahune/Anaconda3/Lib/site-packages/cv2/data/haarcascade_eye.xml"
 
 #Get the Cascade Classifier
-#faceCascade = cv2.CascadeClassifier(faceCascPath)
+faceCascade = cv2.CascadeClassifier(faceCascPath)
 eyeCascade = cv2.CascadeClassifier(eyeCascPath)
 
 #Module acts get the Video from webcam in laptop
@@ -30,6 +30,14 @@ while True:
     filter = cv2.Canny(gray, 45, 45)
 
     #Detect the face using Cascade
+    faces = faceCascade.detectMultiScale(
+        gray,
+        scaleFactor = 1.1,
+        minNeighbors =5,
+        minSize = (30,30),
+        flags = cv2.CASCADE_SCALE_IMAGE
+    )
+
     eyes = eyeCascade.detectMultiScale(
         gray,
         scaleFactor = 1.1,
@@ -39,18 +47,25 @@ while True:
     )
     irises = []
     #Process that Detect Eyes
-    for (ex,ey,ew,eh) in eyes:
-        iris_w = int((ex+epsilon) + float((ew / 2)+epsilon))
-        iris_h = int((ey+epsilon) + float((eh / 2)+epsilon))
-        irises.append([np.float32(iris_w), np.float32(iris_h)])
-    #     print(iris_w, iris_h)
+    dst = gray.copy()
+    for (x,y, w, h) in faces:
+        #print("Face Detected")
+        for (ex,ey,ew,eh) in eyes:
+            iris_w = int((ex+epsilon) + float((ew / 2)+epsilon))
+            iris_h = int((ey+epsilon) + float((eh / 2)+epsilon))
+            irises.append([np.float32(iris_w), np.float32(iris_h)])
+            cv2.line(frame, (iris_w+2, iris_h), (iris_w-2, iris_h), (0,255,0), 2)
+            cv2.line(frame, (iris_w, iris_h+2), (iris_w, iris_h-2), (0,255,0), 2)
+
+    #    print(iris_w, iris_h)
     #    cv2.rectangle(gray, (ex,ey), (ex+ew, ey+eh), (0,255,0), 2)
-        cv2.circle(gray, (iris_w,iris_h),int(float((iris_h/32)+epsilon)), (0,255,0), 2)
+    #        cv2.circle(gray, (iris_w,iris_h),int(float((iris_h/32)+epsilon)), (0,255,0), 2)
+    #        cv2.line(gray, (ex+3,ey), (ex, ey),(255,0,0),1)
 
     #Show the frame
     cv2.imshow('Original Video', frame)
-    cv2.imshow('Gray Video', gray)
-    cv2.imshow('Edge Video', filter)
+    #cv2.imshow('Gray Video', gray)
+    #cv2.imshow('Edge Video', filter)
 
 
     if cv2.waitKey(1) & 0xFF ==ord('q'):
